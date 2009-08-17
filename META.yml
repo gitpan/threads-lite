@@ -1,0 +1,28 @@
+---
+name: threads-lite
+version: 0.010_001
+author:
+  - 'Leon Timmermans <leont@cpan.org>'
+abstract: Yet another threads library
+license: perl
+resources:
+  license: http://dev.perl.org/licenses/
+configure_requires:
+  Module::Build: 0
+requires:
+  Storable: 2.05
+  perl: 5.01
+build_requires:
+  Module::Build: 0
+  Test::More: 0
+provides:
+  threads::lite:
+    file: lib/threads/lite.pm
+    version: 0.010_001
+  threads::lite::tid:
+    file: lib/threads/lite/tid.pm
+    version: 0
+generated_by: Module::Build version 0.3
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.2.html
+  version: 1.2
