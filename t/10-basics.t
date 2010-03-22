@@ -1,22 +1,22 @@
 #!perl 
 
-use Test::More 'no_plan';
+use Test::More tests => 2;
 use Test::Differences;
 
 use threads::lite;
 
-my $thread = threads::lite->spawn({ load  => ['Carp'], monitor => 1 }, sub { print STDERR "It seems to be working!\n"; 42 } );
+my $thread = threads::lite->spawn({ load  => ['Carp'], monitor => 1 }, sub { print STDERR "# It seems to be working!\n"; 42 } );
 
 ok(1, 'Created thread');
 
 alarm 5;
 
 receive_table(
-	[ 'normal' ] => sub {
+	[ 'exit', 'normal' ] => sub {
 		my @arg = @_;
-		eq_or_diff \@arg, [ 'normal', 42], "Got return value 42";
+		eq_or_diff \@arg, [ 'exit', 'normal', $thread->id, 42], "Got return value 42";
 	},
-	[ 'exit' ]   => sub {
-		ok(0, "Got return value 42");
-	}
+	[ 'exit', 'error' ]   => sub {
+		ok(0, 'Got return value 42');
+	},
 );

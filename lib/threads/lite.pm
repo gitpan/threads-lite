@@ -3,16 +3,18 @@ package threads::lite;
 use strict;
 use warnings;
 
-our $VERSION = '0.010_001';
+our $VERSION = '0.020_001';
 
 use 5.010;
 
-use base qw/DynaLoader Exporter/;
+use base qw/Exporter/;
 use Storable 2.05 ();
+use Data::Dumper;
 
-threads::lite->bootstrap($VERSION);
+use XSLoader;
+XSLoader::load('threads::lite', $VERSION);
 
-##no critic ProhibitAutomaticExportation
+##no critic qw(ProhibitAutomaticExportation)
 our @EXPORT = qw/receive receive_nb receive_table self/;
 
 require threads::lite::tid;
@@ -27,6 +29,7 @@ sub _deep_equals {
 	my ($message, $criterion) = @_;
 	return if $#{$message} < $#{$criterion};
 	for my $i (0..$#{$criterion}) {
+		no warnings 'uninitialized';
 		return if not $message->[$i] ~~ $criterion->[$i];
 	}
 	return 1;
@@ -46,28 +49,12 @@ sub _match_mailbox {
 	return;
 }
 
-sub _get_runtime {
-	my $ret;
-	1 while (
-		receive_table(
-			['load'] => \&_load_module,
-			['run']  => sub { $ret = $_[1] },
-		) ne 'run'
-	);
-	return $ret;
-}
-
 sub spawn {
-	my ($class, $options, $args) = @_;
-	my $thread = $class->_create($options->{monitor});
-	for my $module (@{ $options->{modules} }) {
-		$thread->send(load => $module);
-	}
-	$thread->send(run => $args);
-	return $thread;
+	my ($class, $options, $sub) = @_;
+	return $class->_create($options, $sub);
 }
 
-##no critic Subroutines::RequireFinalReturn
+##no critic (Subroutines::RequireFinalReturn)
 
 sub receive {
 	my @args = @_;
@@ -109,8 +96,8 @@ sub receive_table {
 				$pair->[1]->(@next) if defined $pair->[1];
 				return _return_elements(@next);
 			}
-			push @message_cache, \@next;
 		}
+		push @message_cache, \@next;
 	}
 }
 
@@ -124,7 +111,7 @@ threads::lite - Yet another threads library
 
 =head1 VERSION
 
-Version 0.010
+Version 0.020
 
 =head1 SYNOPSIS
 

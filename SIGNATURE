@@ -14,29 +14,34 @@ not run its Makefile.PL or Build.PL.
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
-SHA1 f63632c6f9fe6bfa91eac28fab29e8a6fb566d5f Build.PL
+SHA1 984fb21452b1c1d88ded35df86edf91c51eb5d2f Build.PL
 SHA1 61a16714b6aa8cfbfb6867f023ffb7bf7f7242e0 Changes
-SHA1 d9851f0a229b0bb51ca8dde472cbc995b55b290d MANIFEST
-SHA1 6d9be2fdb4904da3158ce536ae98d8bb12664163 META.yml
-SHA1 ecdedc845fa6d1c4cd7de94eb7f01e6d6df0ba2c Makefile.PL
-SHA1 ff4032acfd0c5f5772f91cd68bae417f40920a0d README
-SHA1 fb257c7c07c00c0dbd9f0e2829393adfb4a2bfd9 lib/threads/lite.pm
-SHA1 fa4aa6eaa942a082d9affe54442beac706e7673e lib/threads/lite.xs
-SHA1 e8c9eb2cad7e36256369db1973ee339d4ff6a029 lib/threads/lite/tid.pm
-SHA1 2e0cbc57371a0985aa6c62a6fac01737d53e50bd src/mthread.c
-SHA1 2dc0b6411703dbd62f8891b4423935512a7e8cba src/mthread.h
-SHA1 ccb3da545491031f7e4e3e6af17fcff386b4cfa0 src/queue.c
-SHA1 f389a50dc29368a531c4d490ac9b4765346d0962 src/queue.h
-SHA1 e7329ff5e73c42e4803e810867e1c723a12d8b50 src/resources.c
-SHA1 513beddfb7255b9646b739ee35e8c7e7da245de4 src/resources.h
+SHA1 b6c306143b1ef72ff39386e5231b47554d354450 MANIFEST
+SHA1 39abe24e4113e494a63e69c5349174ea9cbdb60b META.yml
+SHA1 45b668620e5759d193870be1e1e9077feb27b604 Makefile.PL
+SHA1 de6769a19c0428b0beba82e51fd245927ad5cb59 README
+SHA1 13a4263c5c48f1999d1c15ef9a933cb5882e1ce6 lib/threads/lite.pm
+SHA1 ec98a6406f8253556a674c46ad905a77bec9add2 lib/threads/lite.xs
+SHA1 cd21c739a63956a3037101da2eb59af4aba41ac0 lib/threads/lite/list.pm
+SHA1 e544f4153eb74491cb98385ce7795d5239b6b8ad lib/threads/lite/tid.pm
+SHA1 6f942a3aa4b7201650bbc0cc2a3b3b6ca3b6a14c ppport.h
+SHA1 02485d29776f747cbc5c1b95871027710e65fe21 src/mthread.c
+SHA1 a84f4176d8fb1343b16e91418c171f9ccdcaac8d src/mthread.h
+SHA1 6e92da103f5a2cbdd258b2e45706da533c66dab4 src/queue.c
+SHA1 dbdb35b497fa66f2187da7b12489919b603edf0f src/queue.h
+SHA1 016241bc01f81396cb1fc7dcb02844dc047c0b0f src/resources.c
+SHA1 ccdd17f898d1a189bbe60603dd6c086f3d47bd3d src/resources.h
+SHA1 8677cb7f1eca378b909c38ec0d400978c2153587 src/sync.c
+SHA1 cf9406d032d5195bbd78ac49709868c678227321 src/sync.h
 SHA1 725a32d64d694514ba6cd6d076f4af253bab69c9 t/00-load.t
-SHA1 9ef5035f3411255be898bfe35ce56a31b9624040 t/10-basics.t
+SHA1 a1dc821b7d3e167067a80b20b0c6f09d100bc877 t/10-basics.t
+SHA1 05aaeb5c55bbe215762735fa1973dc108c2bf733 t/20-lists.t
 SHA1 0b1c5a2d59be6bfa7d60c64cd964fea6a0331705 t/pod-coverage.t
 SHA1 640935336dc1123c0069bcf5432bcaedc2cf22d3 t/pod.t
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkqJ18kACgkQTd+EWiaICwrPpACeOoaXkorRG0mzw88Js7Yq9UyO
-Vv0AoK8i6ZQSkwhHZC31UWJ1Mdg6Qb1T
-=xnNF
+iEYEARECAAYFAkunmL4ACgkQTd+EWiaICwoBzwCeL/XB0+P15xbSaFP4LGEXt2Rk
+rFoAn26qvHhWYRh5CaBNlyP0RFolciCg
+=1d9F
 -----END PGP SIGNATURE-----

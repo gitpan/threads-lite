@@ -59,64 +59,84 @@ static void xs_init(pTHX) {
 	newXS((char*)"DynaLoader::boot_DynaLoader", boot_DynaLoader, (char*)__FILE__);
 }
 
-static const char* argv[] = {"", "-e", "threads::lite::_run()"};
+static const char* argv[] = {"", "-e", "0"};
 static int argc = sizeof argv / sizeof *argv;
 
-void S_store_self(pTHX_ mthread* thread) {
+void store_self(pTHX, mthread* thread) {
 	SV* thread_sv = newSV_type(SVt_PV);
 	SvPVX(thread_sv) = (char*) thread;
 	SvCUR(thread_sv) = sizeof(mthread);
 	SvLEN(thread_sv) = 0;
 	SvPOK_only(thread_sv);
 	SvREADONLY_on(thread_sv);
-	hv_store(PL_modglobal, "thread::lite::self", 18, thread_sv, 0);
+	hv_store(PL_modglobal, "threads::lite::thread", 21, thread_sv, 0);
 
+	SV* self = newRV_noinc(newSVuv(thread->id));
+	sv_bless(self, gv_stashpv("threads::lite::tid", TRUE));
+	hv_store(PL_modglobal, "threads::lite::self", 19, self, 0);
+}
+
+mthread* S_get_self(pTHX) {
+    SV** self_sv = hv_fetch(PL_modglobal, "threads::lite::thread", 21, FALSE);
+    if (!self_sv)
+        Perl_croak(aTHX_ "Can't find self thread object!");
+    return (mthread*)SvPV_nolen(*self_sv);
+}
+
+static perl_mutex* get_shutdown_mutex() {
+	static int inited = 0;
+	static perl_mutex mutex;
+	if (!inited) {
+		MUTEX_INIT(&mutex);
+		inited = 1;
+	}
+	return &mutex;
 }
 
 static void* run_thread(void* arg) {
 	mthread* thread = (mthread*) arg;
-	PerlInterpreter* my_perl = perl_alloc();
-	perl_construct(my_perl);
-	PL_exit_flags |= PERL_EXIT_DESTRUCT_END;
+	PerlInterpreter* my_perl = thread->interp;
 
-	perl_parse(my_perl, xs_init, argc, (char**)argv, NULL);
 	S_set_sigmask(&thread->initial_sigmask);
+	PERL_SET_CONTEXT(my_perl);
 
-	store_self(thread);
-
-	load_module(PERL_LOADMOD_NOIMPORT, newSVpv("threads::lite", 0), NULL, NULL);
+	message to_run;
+	queue_dequeue(&thread->queue, &to_run);
+	SV* call = SvRV(message_load_value(&to_run));
 
 	dSP;
 
 	PUSHMARK(SP);
-	call_pv("threads::lite::_get_runtime", G_SCALAR);
-	SPAGAIN;
-
-	SV* call = POPs;
-	SV* status = sv_2mortal(newSVpvn("normal", 6));
+	PUSHs(newSVpvn("exit", 4));
+	SV* status = newSVpvn("normal", 6);
 	PUSHs(status);
-	SV** old = SP;
+	PUSHs(newSViv(thread->id));
 
 	PUSHMARK(SP);
 	PUTBACK;
 	call_sv(call, G_ARRAY|G_EVAL);
 	SPAGAIN;
 
-	message message;
 	if (SvTRUE(ERRSV)) {
 		sv_setpvn(status, "error", 5);
+		warn("Thread %"UVuf" got error %s\n", thread->id, SvPV_nolen(ERRSV));
 		PUSHs(ERRSV);
 	}
-	PUSHMARK(old);
-	message_pull_stack(&message);
+	message message;
+	message_pull_stack_pushed(&message);
 	send_listeners(thread, &message);
 	message_destroy(&message);
 
+	perl_mutex* shutdown_mutex = get_shutdown_mutex();
+	MUTEX_LOCK(shutdown_mutex);
 	perl_destruct(my_perl);
-	perl_free(my_perl);
+	MUTEX_UNLOCK(shutdown_mutex);
 
 	mthread_destroy(thread);
+	perl_free(my_perl);
+	
 	Safefree(thread);
+
 	return NULL;
 }
 
@@ -158,15 +178,10 @@ static int S_set_sigmask(sigset_t *newmask)
 }
 #endif /* WIN32 */
 
-mthread* create_thread(IV stack_size, IV linked_to) {
-	mthread* thread = mthread_alloc(linked_to);
+
+static mthread* start_thread(mthread* thread, IV stack_size) {
 #ifdef WIN32
-	thread->handle = CreateThread(NULL,
-								  (DWORD)stack_size,
-								  run_thread,
-								  (LPVOID)thread,
-								  STACK_SIZE_PARAM_IS_A_RESERVATION,
-								  &thread->thr);
+	thread->handle = CreateThread(NULL, (DWORD)stack_size, run_thread, (LPVOID)thread, STACK_SIZE_PARAM_IS_A_RESERVATION, &thread->thr);
 #else
 	int rc_stack_size = 0;
 	int rc_thread_create = 0;
@@ -175,15 +190,15 @@ mthread* create_thread(IV stack_size, IV linked_to) {
 
 	static pthread_attr_t attr;
 	static int attr_inited = 0;
-	static int attr_joinable = PTHREAD_CREATE_DETACHED;
+	static int attr_detached = PTHREAD_CREATE_DETACHED;
 	if (! attr_inited) {
 		pthread_attr_init(&attr);
 		attr_inited = 1;
 	}
 
 #  ifdef PTHREAD_ATTR_SETDETACHSTATE
-	/* Threads start out joinable */
-	PTHREAD_ATTR_SETDETACHSTATE(&attr, attr_joinable);
+	/* Threads start out detached */
+	PTHREAD_ATTR_SETDETACHSTATE(&attr, attr_detached);
 #  endif
 
 #  ifdef _POSIX_THREAD_ATTR_STACKSIZE
@@ -210,4 +225,96 @@ mthread* create_thread(IV stack_size, IV linked_to) {
 	S_set_sigmask(&thread->initial_sigmask);
 #endif
 	return thread;
+}
+
+static PerlInterpreter* construct_perl() {
+	PerlInterpreter* my_perl = perl_alloc();
+	PERL_SET_CONTEXT(my_perl);
+	perl_construct(my_perl);
+	PL_exit_flags |= PERL_EXIT_DESTRUCT_END;
+
+	perl_parse(my_perl, xs_init, argc, (char**)argv, NULL);
+	ENTER;
+	load_module(PERL_LOADMOD_NOIMPORT, newSVpv("threads::lite", 0), NULL, NULL);
+	LEAVE;
+	return my_perl;
+}
+
+static int get_clone_number(pTHX, SV* options) {
+	SV** clone_number_ptr = hv_fetch((HV*)SvRV(options), "pool_size", 9, FALSE);
+	if (clone_number_ptr && SvOK(*clone_number_ptr))
+		return SvIV(*clone_number_ptr);
+	return 1;
+}
+
+static int should_monitor(pTHX, SV* options) {
+	SV** monitor_ptr = hv_fetch((HV*)SvRV(options), "monitor", 7, FALSE);
+	if (monitor_ptr && SvOK(*monitor_ptr))
+		return SvIV(*monitor_ptr);
+	return FALSE;
+}
+
+static void load_modules(pTHX, SV* options) {
+	SV** modules_ptr = hv_fetch((HV*)SvRV(options), "modules", 7, FALSE);
+	if (modules_ptr && SvROK(*modules_ptr) && SvTYPE(SvRV(*modules_ptr)) == SVt_PVAV) {
+		AV* list = (AV*)SvRV(*modules_ptr);
+		I32 len = av_len(list) + 1;
+		int i;
+		for(i = 0; i < len; i++) {
+			SV** entry = av_fetch(list, i, FALSE);
+			load_module(PERL_LOADMOD_NOIMPORT, *entry, NULL, NULL);
+		}
+	}
+}
+
+static unsigned get_stack_size(pTHX, SV* options) {
+	SV** stack_size_ptr = hv_fetch((HV*)SvRV(options), "stack_size", 10, FALSE);
+	if (stack_size_ptr && SvOK(*stack_size_ptr))
+		return SvUV(*stack_size_ptr);
+	return 65536u;
+}
+
+static void push_thread(pTHX, mthread* thread) {
+	PERL_SET_CONTEXT(aTHX);
+	dSP;
+	SV* to_push = newRV_noinc(newSVuv(thread->id));
+	sv_bless(to_push, gv_stashpv("threads::lite::tid", FALSE));
+	XPUSHs(to_push);
+	PUTBACK;
+}
+
+void S_create_push_threads(PerlInterpreter* self, SV* options, SV* startup) {
+	UV id = S_get_self(self)->id;
+	message to_run;
+	S_message_store_value(self, &to_run, startup);
+
+	int clone_number = get_clone_number(self, options);
+	int monitor = should_monitor(self, options);
+	size_t stack_size = get_stack_size(self, options);
+
+	PerlInterpreter* my_perl = construct_perl();
+	load_modules(aTHX, options);
+
+	mthread* thread = mthread_alloc(my_perl);
+	store_self(my_perl, thread);
+	if (monitor)
+		thread_add_listener(self, thread->id, id);
+
+	queue_enqueue(&thread->queue, &to_run, NULL);
+
+	push_thread(self, thread);
+	while (--clone_number) {
+		PerlInterpreter* my_clone = perl_clone(my_perl, 0);
+		mthread* thread = mthread_alloc(my_clone);
+		store_self(my_clone, thread);
+		if (monitor)
+			thread_add_listener(self, thread->id, id);
+		queue_enqueue_copy(&thread->queue, &to_run, NULL);
+		push_thread(self, thread);
+		start_thread(thread, stack_size);
+	}
+
+	start_thread(thread, stack_size);
+
+	PERL_SET_CONTEXT(self);
 }
