@@ -1,10 +1,14 @@
 ---
 name: threads-lite
-version: 0.020_001
+version: 0.020_002
 author:
   - 'Leon Timmermans <leont@cpan.org>'
 abstract: Yet another threads library
 license: perl
+resources:
+  bugtracker: http://rt.cpan.org/NoAuth/Bugs.html?Dist=threads-lite
+  license: http://dev.perl.org/licenses/
+  repository: http://github.com/Leont/threads-lite/tree
 configure_requires:
   Module::Build: 0
 requires:
@@ -13,19 +17,20 @@ requires:
 build_requires:
   Module::Build: 0
   Test::More: 0
-generated_by: Module::Build version 0.280801
-meta-spec:
-  url: http://module-build.sourceforge.net/META-spec-v1.2.html
-  version: 1.2
 provides:
   threads::lite:
     file: lib/threads/lite.pm
-    version: 0.020_001
+    version: 0.020_002
   threads::lite::list:
     file: lib/threads/lite/list.pm
     version: 0
   threads::lite::tid:
     file: lib/threads/lite/tid.pm
     version: 0
-resources:
-  license: http://dev.perl.org/licenses/
+generated_by: Module::Build version 0.280801
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.2.html
+  version: 1.2
+keywords:
+  - threads
+  - channels
