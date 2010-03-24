@@ -1,6 +1,6 @@
 ---
 name: threads-lite
-version: 0.020_002
+version: 0.021
 author:
   - 'Leon Timmermans <leont@cpan.org>'
 abstract: Yet another threads library
@@ -20,7 +20,7 @@ build_requires:
 provides:
   threads::lite:
     file: lib/threads/lite.pm
-    version: 0.020_002
+    version: 0.021
   threads::lite::list:
     file: lib/threads/lite/list.pm
     version: 0

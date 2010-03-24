@@ -2,9 +2,9 @@ package threads::lite::list;
 
 use strict;
 use warnings;
-use base 'Exporter';
+use Exporter 5.57 qw/import/;
 
-our @EXPORT_OK = qw/paralel_map/;
+our @EXPORT_OK = qw/parallel_map/;
 
 use threads::lite;
 
@@ -17,7 +17,7 @@ sub _mapper {
 	my $continue = 1;
 	while ($continue) {
 		receive_table(
-			[ qr//, 'map' ] => sub {
+			[ qr/thread=\d+/, 'map' ] => sub {
 				my ($manager, undef, $index, $value) = @_;
 				local $_ = $value;
 				$manager->send(self, 'map', $index, $filter->());
@@ -65,13 +65,13 @@ sub map {
 		$i++;
 	}
 	while ($i < @args) {
-		my ($thread, $index, @value) = _receive_next(qr//);
+		my ($thread, $index, @value) = _receive_next( [ values %threads ] );
 		$ret[$index] = \@value;
 		$thread->send($id, 'map', $i, $args[$i]);
 		$i++;
 	}
 	while (%threads) {
-		my ($thread, $index, @value) = _receive_next(qr//);
+		my ($thread, $index, @value) = _receive_next( [ values %threads ] );
 		$ret[$index] = \@value;
 		delete $threads{ $thread->id };
 	}
@@ -79,11 +79,36 @@ sub map {
 	return map { @{$_} } @ret;
 }
 
-sub paralel_map(&@) {
-	my ($code, @args) = @_;
+sub grep {
+	my ($self, @args) = @_;
 
-	my $object = __PACKAGE__->new(code => $code);
+	my @values = $self->map(@args);
+
+	my @ret;
+	for my $i (0..$#args) {
+		push @ret, $args[$i] if $values[$i];
+	}
+	return @ret;
+}
+
+sub parallel_map(&@) {
+	my ($code, $options, @args) = @_;
+
+	my $object = __PACKAGE__->new(
+		($options ? %{$options} : ()),
+		code => $code
+	);
 	return $object->map(@args);
+}
+
+sub parallel_grep(&@) {
+	my ($code, $options, @args) = @_;
+
+	my $object = __PACKAGE__->new(
+		($options ? %{$options} : ()),
+		code => $code
+	);
+	return $object->grep(@args);
 }
 
 sub DESTROY {
@@ -102,7 +127,7 @@ threads::lite::list - Threaded list utilities
 
 =head1 VERSION
 
-Version 0.010
+Version 0.020
 
 =head1 SYNOPSIS
 
@@ -112,13 +137,45 @@ This module implements threads for perl. One crucial difference with normal thre
 
 =head1 FUNCTIONS
 
-=head2 paralel_map
+=head2 parallel_map { block } $options, @elements
 
-XXX
+map a list using multiple threads. $options is a hashref whose keys are like in C<new>.
 
-=head2 new
+=head2 parallel_grep { block } $options, @elements
 
-=head2 map
+grep a list using multiple threads. $options is a hashref whose keys are like in C<new>.
+
+=head1 METHODS
+
+A parallel list processing object can be created if you want to reuse your filter with other arguments.
+
+=head2 new(%options)
+
+Create a new parallel list processing object. It takes three named arguments.
+
+=over 2
+
+=item * code
+
+A reference to the piece of code that should be executed, or it's name. Note that if a name is given, it's containing module must be loaded using C<modules>.
+
+=item * modules
+
+Modules that must be loaded be for the mapping or grepping.
+
+=item * threads
+
+The number of threads you want to use to do the mapping. The default is currently 4, an arbitrary number that may change in the future.
+
+=back
+
+=head2 map(@elements)
+
+Map elements in a parallel manner.
+
+=head2 grep(@elements)
+
+Grep elements in a parallel manner.
 
 =head1 AUTHOR
 
@@ -137,7 +194,6 @@ automatically be notified of progress on your bug as I make changes.
 You can find documentation for this module with the perldoc command.
 
     perldoc threads::lite::list
-
 
 You can also look for information at:
 
@@ -163,7 +219,7 @@ L<http://search.cpan.org/dist/threads-lite>
 
 =head1 COPYRIGHT & LICENSE
 
-Copyright 2009 Leon Timmermans, all rights reserved.
+Copyright 2009, 2010 Leon Timmermans, all rights reserved.
 
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
