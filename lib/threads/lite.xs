@@ -15,13 +15,13 @@ BOOT:
 	global_init(aTHX);
 
 SV*
-_create(class, options, startup)
-	SV* class;
+spawn(options, startup)
 	SV* options;
 	SV* startup;
 	PPCODE:
 		PUTBACK;
-		create_push_threads(options, startup);
+		HV* real_options = SvROK(options) && SvTYPE(SvRV(options)) == SVt_PVHV ? (HV*) SvRV(options) : (HV*)sv_2mortal((SV*)newHV());
+		create_push_threads(real_options, startup);
 		SPAGAIN;
 
 void

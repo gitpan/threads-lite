@@ -51,7 +51,7 @@ threads::lite::tid - a threads::lite thread id
 
 =head1 VERSION
 
-Version 0.010
+Version 0.022
 
 =head1 SYNOPSIS
 
@@ -65,7 +65,7 @@ Send a message to a thread. The message items may contain any data type that can
 
 =head2 id
 
-Get the numerical id of this thread.
+Get an opaque but primitive identifier for thread.
 
 =head2 monitor
 
