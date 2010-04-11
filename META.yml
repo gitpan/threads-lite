@@ -1,6 +1,6 @@
 ---
 name: threads-lite
-version: 0.024
+version: 0.025
 author:
   - 'Leon Timmermans <leont@cpan.org>'
 abstract: Yet another threads library
@@ -22,16 +22,16 @@ build_requires:
 provides:
   threads::lite:
     file: lib/threads/lite.pm
-    version: 0.024
+    version: 0.025
   threads::lite::list:
     file: lib/threads/lite/list.pm
-    version: 0.024
+    version: 0.025
   threads::lite::queue:
     file: lib/threads/lite/queue.pm
-    version: 0.024
+    version: 0.025
   threads::lite::tid:
     file: lib/threads/lite/tid.pm
-    version: 0.024
+    version: 0.025
 generated_by: Module::Build version 0.280801
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.2.html

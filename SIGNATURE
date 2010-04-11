@@ -15,26 +15,26 @@ not run its Makefile.PL or Build.PL.
 Hash: SHA1
 
 SHA1 8b50624f5c69c0185c351edaefb79c4b00d6f413 Build.PL
-SHA1 81e4641fa3298378c5a3cc4a8ab7c32114bf32eb Changes
+SHA1 016149399dcfbeba426b7d043eb0d4ccbffa4cb6 Changes
 SHA1 e409c6eef568d35cca94d701a2d1b6ea19193ce9 LICENSE
 SHA1 dda1178f2bb427689cf2106b9b815111ac2c5727 MANIFEST
-SHA1 2dc94395b4b72a922ece07017faf3b4e4373361f META.yml
+SHA1 220edacab199be3b710ad549216b3e89d043e6d3 META.yml
 SHA1 45b668620e5759d193870be1e1e9077feb27b604 Makefile.PL
 SHA1 de6769a19c0428b0beba82e51fd245927ad5cb59 README
 SHA1 25c91aea8b0c1ebf12b0cfb1f61f2eb1ebf30d11 examples/reader.pl
-SHA1 6fe22dc18e0562ed82d09a67578e0a75ba05d2ab lib/threads/lite.pm
+SHA1 66dcdcf51cd152e45b1ee38480bc24a3955b2ed6 lib/threads/lite.pm
 SHA1 02a2f5f22d1d8af2c0746abb4a84626fed5c2cd1 lib/threads/lite.xs
-SHA1 f114ded2c048ce1ba51567c80861ec30b1bfc221 lib/threads/lite/list.pm
-SHA1 67b312a61ce6625bd52fb321fd2416c65eb2d42e lib/threads/lite/queue.pm
-SHA1 451e4733aeaeefe665efccb53e799e818152e9fa lib/threads/lite/tid.pm
-SHA1 c6e1cb93579f5d0f568939e299964f76a756139c src/message.c
-SHA1 d6173b6c104f1ac159054e4d01f872f4b2aafc33 src/message.h
+SHA1 5a72e4592e5045bc6ff28a65072d343a59f056f2 lib/threads/lite/list.pm
+SHA1 5d2705db24f94b0d2f070fbd7fb4ca7f6fbe4798 lib/threads/lite/queue.pm
+SHA1 f6deb7ca1163d7ceed106ead34db54750dcc88af lib/threads/lite/tid.pm
+SHA1 35400d9879924a74ed09e3526653e7cc8610fba7 src/message.c
+SHA1 282b6c32841e0a140fca926480b9c755211b5c3c src/message.h
 SHA1 e3eae6eed68f4c019c05bf91cf6ffa6294859054 src/mthread.c
 SHA1 7b358f8f90d3e92a8510da0d032d98a333d466f7 src/mthread.h
 SHA1 768a40e49fcfdf97139aaa9927589c7e0c21eea1 src/queue.c
 SHA1 cc55eb810fee34754968c2129a39df60928ad8ef src/queue.h
-SHA1 d8c0645d43bfcad9b41d210de797358cd96671a4 src/resources.c
-SHA1 0f52b615dac068b061d6df85375514710d9d174d src/resources.h
+SHA1 91c6d4adbcd47ec7af7fc511cc4bc02e877189d5 src/resources.c
+SHA1 dd6cc66d40da1817229b1987907cc9191c85427a src/resources.h
 SHA1 8677cb7f1eca378b909c38ec0d400978c2153587 src/sync.c
 SHA1 cf9406d032d5195bbd78ac49709868c678227321 src/sync.h
 SHA1 725a32d64d694514ba6cd6d076f4af253bab69c9 t/00-load.t
@@ -47,7 +47,7 @@ SHA1 640935336dc1123c0069bcf5432bcaedc2cf22d3 t/pod.t
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAku/VR0ACgkQTd+EWiaICwp58QCfUGA+7T9qpzx+F+1XnQ6Pb/u/
-iz8AnRFbAcBs56V3ZbcZEKS5FaPDQ6C1
-=FQiZ
+iEYEARECAAYFAkvCEx8ACgkQTd+EWiaICwpnXgCgxjCQ7h0FbKIoISq/g9jPeA8w
+laoAnjt9M9ZPF7/lNzicD5S/kPz7kyiW
+=kBtd
 -----END PGP SIGNATURE-----
