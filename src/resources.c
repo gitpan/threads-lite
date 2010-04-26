@@ -85,11 +85,6 @@ void global_init(pTHX) {
 		resource_init(&threads, 8);
 		resource_init(&queues, 8);
 		mthread* ret = mthread_alloc(aTHX);
-#  ifdef WIN32
-		ret->thr = GetCurrentThreadId();
-#  else
-		ret->thr = pthread_self();
-#  endif
 		store_self(aTHX, ret);
 
 		/* This is a nasty trick to make sure locking is performed during part of the destruct */
@@ -110,6 +105,7 @@ mthread* mthread_alloc(PerlInterpreter* my_perl) {
 	UV id = resource_addobject(&threads, ret);
 	ret->id = id;
 	ret->interp = my_perl;
+	MUTEX_INIT(&ret->lock);
 	return ret;
 }
 
@@ -118,6 +114,8 @@ void mthread_destroy(mthread* thread) {
 	threads.objects[thread->id] = NULL;
 	queue_destroy(&thread->queue);
 	MUTEX_UNLOCK(&threads.lock);
+
+	MUTEX_DESTROY(&thread->lock);
 
 	MUTEX_LOCK(&counter.mutex);
 	counter.count--;

@@ -1,9 +1,9 @@
 ---
 name: threads-lite
-version: 0.025
+version: 0.026
 author:
   - 'Leon Timmermans <leont@cpan.org>'
-abstract: Yet another threads library
+abstract: Erlang style threading library
 license: perl
 resources:
   bugtracker: http://rt.cpan.org/NoAuth/Bugs.html?Dist=threads-lite
@@ -12,9 +12,11 @@ resources:
 configure_requires:
   Module::Build: 0
 requires:
+  Exporter: 5.57
   Storable: 2.05
   perl: 5.01
 build_requires:
+  ExtUtils::CBuilder: 0
   Module::Build: 0
   Test::Differences: 0
   Test::Exception: 0
@@ -22,7 +24,7 @@ build_requires:
 provides:
   threads::lite:
     file: lib/threads/lite.pm
-    version: 0.025
+    version: 0.026
   threads::lite::list:
     file: lib/threads/lite/list.pm
     version: 0.025

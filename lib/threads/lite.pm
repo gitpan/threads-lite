@@ -3,18 +3,21 @@ package threads::lite;
 use strict;
 use warnings;
 
-our $VERSION = '0.025';
+our $VERSION = '0.026';
 
 use 5.010;
 
-use base qw/Exporter/;
+use Exporter 5.57 qw/import/;
 use Storable 2.05 ();
-use Data::Dumper;
 
 use XSLoader;
 XSLoader::load('threads::lite', $VERSION);
 
-our @EXPORT_OK = qw/spawn receive receive_nb receive_table receive_table_nb self/;
+our @EXPORT_OK = qw/spawn receive receive_nb receive_table receive_table_nb self send_to/;
+our %EXPORT_TAGS = (
+	receive => [ qw/receive receive_nb receive_table receive_table_nb/ ],
+	all     => \@EXPORT_OK,
+);
 
 require threads::lite::tid;
 
@@ -28,38 +31,12 @@ sub _deep_equals {
 	my ($message, $criterion) = @_;
 	return if $#{$message} < $#{$criterion};
 	for my $i (0..$#{$criterion}) {
-		return if not $message->[$i] ~~ $criterion->[$i];
+		return 0 if not $message->[$i] ~~ $criterion->[$i];
 	}
 	return 1;
 }
 
-sub _return_elements {
-	my @args = @_;
-	return wantarray ? @args : $args[0];
-}
-
-sub _match_mailbox {
-	my ($criterion) = @_;
-	for my $i (0..$#message_cache) {
-		next if not _deep_equals($message_cache[$i], $criterion);
-		return @{ splice @message_cache, $i, 1 };
-	}
-	return;
-}
-
 ##no critic (Subroutines::RequireFinalReturn)
-
-sub receive {
-	my @args = @_;
-	if (my @ret = _match_mailbox(\@args)) {
-		return @ret;
-	}
-	while (1) {
-		my @next = _receive;
-		return _return_elements(@next) if _deep_equals(\@next, \@args);
-		push @message_cache, \@next;
-	}
-}
 
 sub receive_nb {
 	my @args = @_;
@@ -67,8 +44,8 @@ sub receive_nb {
 		return @ret;
 	}
 	while (my @next = _receive_nb) {
-		return _return_elements(@next) if _deep_equals(\@next, \@args);
-		push @message_cache, \@next;
+		return _return_elements(\@next) if _deep_equals(\@next, \@args);
+		_push_mailbox(\@next);
 	}
 	return;
 }
@@ -82,7 +59,7 @@ sub receive_table {
 	for my $pair (@table) {
 		if (my @ret = _match_mailbox($pair->[0])) {
 			$pair->[1]->(@ret) if defined $pair->[1];
-			return _return_elements(@ret);
+			return _return_elements(\@ret);
 		}
 	}
 	while (1) {
@@ -90,10 +67,10 @@ sub receive_table {
 		for my $pair (@table) {
 			if (_deep_equals(\@next, $pair->[0])) {
 				$pair->[1]->(@next) if defined $pair->[1];
-				return _return_elements(@next);
+				return _return_elements(\@next);
 			}
 		}
-		push @message_cache, \@next;
+		_push_mailbox(\@next);
 	}
 }
 
@@ -106,17 +83,17 @@ sub receive_table_nb {
 	for my $pair (@table) {
 		if (my @ret = _match_mailbox($pair->[0])) {
 			$pair->[1]->(@ret) if defined $pair->[1];
-			return _return_elements(@ret);
+			return _return_elements(\@ret);
 		}
 	}
 	while (my @next = _receive) {
 		for my $pair (@table) {
 			if (_deep_equals(\@next, $pair->[0])) {
 				$pair->[1]->(@next) if defined $pair->[1];
-				return _return_elements(@next);
+				return _return_elements(\@next);
 			}
 		}
-		push @message_cache, \@next;
+		_push_mailbox(\@next);
 	}
 	return;
 }
@@ -127,11 +104,11 @@ __END__
 
 =head1 NAME
 
-threads::lite - Yet another threads library
+threads::lite - Erlang style threading library
 
 =head1 VERSION
 
-Version 0.025
+Version 0.026
 
 =head1 SYNOPSIS
 
@@ -202,9 +179,13 @@ The stack size for the newly created threads. It defaults to 64 kiB.
 
 $sub can be a function name or a subref. If it is a name, you must make sure the module it is in is loaded in the new thread. If it is a reference it will be serialized and sent to the new thread. This means that any enclosed variables will probability not work as expected.
 
-=head3 self
+=head3 self()
 
 Retreive the tid corresponding with the current thread.
+
+=head3 send_to($id, ...)
+
+Send a message a thread identified by its primitive identifier
 
 =head2 Receiving functions
 
@@ -244,7 +225,7 @@ Leon Timmermans, C<< <leont at cpan.org> >>
 
 =head1 BUGS
 
-This is an early development release, and is expected to be buggy and incomplete.
+This is an early development release, and is expected to be buggy and incomplete. In particular, memory management is known to be buggy.
 
 Please report any bugs or feature requests to C<bug-threads-lite at rt.cpan.org>, or through
 the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=threads-lite>.  I will be notified, and then you'll
@@ -256,7 +237,6 @@ automatically be notified of progress on your bug as I make changes.
 You can find documentation for this module with the perldoc command.
 
     perldoc threads::lite
-
 
 You can also look for information at:
 
