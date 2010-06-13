@@ -1,6 +1,6 @@
 ---
 name: threads-lite
-version: 0.027
+version: 0.028
 author:
   - 'Leon Timmermans <leont@cpan.org>'
 abstract: Erlang style threading library
@@ -24,7 +24,7 @@ configure_requires:
 provides:
   threads::lite:
     file: lib/threads/lite.pm
-    version: 0.027
+    version: 0.028
   threads::lite::list:
     file: lib/threads/lite/list.pm
     version: 0.025
