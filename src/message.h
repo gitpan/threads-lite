@@ -1,3 +1,7 @@
+#ifdef PACKED
+#undef PACKED
+#endif
+
 enum message_type { EMPTY, STRING, PACKED, STORABLE };
 
 typedef struct {
@@ -14,8 +18,8 @@ void S_message_clone(pTHX_ message* origin, message* clone);
 void S_message_to_stack(pTHX_ message*, U32 context);
 #define message_to_stack(values, context) STMT_START { PUTBACK; S_message_to_stack(aTHX_ (values), context); SPAGAIN; } STMT_END
 
-void S_message_to_array(pTHX_ message*, AV**);
-#define message_to_array(values, context) S_message_to_array(aTHX_ (values), context)
+AV* S_message_to_array(pTHX_ message*);
+#define message_to_array(message) S_message_to_array(aTHX_ (message))
 
 void S_message_from_stack(pTHX_ message*);
 #define message_from_stack_pushed(message) STMT_START { PUTBACK; S_message_from_stack(aTHX_ message); SPAGAIN; } STMT_END
@@ -27,3 +31,4 @@ void S_message_store_value(pTHX_ message* message, SV* value);
 SV* S_message_load_value(pTHX_ message* message);
 #define message_load_value(message) S_message_load_value(aTHX_ message)
 
+void message_destroy(message*);

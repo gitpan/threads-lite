@@ -4,30 +4,28 @@ use strict;
 use warnings;
 use Scalar::Util qw/blessed/;
 
-use overload 
-	'~~' => sub { 
-		my ($self, $other, $reverse) = @_;
-#		($self, $other) = ($other, $self) if $reverse;
-		if (blessed($other) && $other->isa(__PACKAGE__)) {
-			return $self->id == $other->id;
-		}
-		else {
-			return $self eq $other;
-		}
-	},
-	'""' => sub {
-		my $self = shift;
-		return "thread=${$self}";
-	},
-	'eq' => sub {
-		my ($self, $other, $reverse) = @_;
-		($self, $other) = ($other, $self) if $reverse;
-		return "$self" ~~ $other;
-	};
+use overload '~~' => sub {
+	my ($self, $other, $reverse) = @_;
+	if (blessed($other) && $other->isa(__PACKAGE__)) {
+		return $self->id == $other->id;
+	}
+	else {
+		return $self eq $other;
+	}
+  },
+  '""' => sub {
+	my $self = shift;
+	return "thread=${$self}";
+  },
+  'eq' => sub {
+	my ($self, $other, $reverse) = @_;
+	($self, $other) = ($other, $self) if $reverse;
+	return "$self" ~~ $other;
+  };
 
 use threads::lite qw/self receive/;
 
-our $VERSION = 0.025;
+our $VERSION = 0.029_001;
 
 sub rpc {
 	my ($self, @arguments) = @_;
@@ -51,7 +49,7 @@ threads::lite::tid - a threads::lite thread id
 
 =head1 VERSION
 
-Version 0.025
+Version 0.029_001
 
 =head1 SYNOPSIS
 

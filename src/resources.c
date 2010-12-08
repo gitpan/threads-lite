@@ -126,7 +126,7 @@ void mthread_destroy(mthread* thread) {
 	MUTEX_UNLOCK(&counter.mutex);
 }
 
-static inline mthread* S_get_thread(pTHX_ UV thread_id) {
+static mthread* S_get_thread(pTHX_ UV thread_id) {
 	if (thread_id >= threads.current || threads.objects[thread_id] == NULL)
 		Perl_croak(aTHX_  "Thread %"UVuf" doesn't exist", thread_id);
 	return threads.objects[thread_id];
@@ -141,7 +141,7 @@ UV queue_alloc(IV linked_to) {
 	return resource_addobject(&queues, queue);
 }
 
-static inline message_queue* S_get_queue(pTHX_ UV queue_id) {
+static message_queue* S_get_queue(pTHX_ UV queue_id) {
 	if (queue_id >= queues.current || queues.objects[queue_id] == NULL)
 		Perl_croak(aTHX_  "queue %"UVuf" doesn't exist", queue_id);
 	return queues.objects[queue_id];
@@ -203,12 +203,12 @@ void S_queue_receive_nb(pTHX_ UV queue_id, message* message) {
 }
 
 void S_send_listeners(pTHX_ mthread* thread, message* mess) {
+	int i;
 	dXCPT;
 
 	MUTEX_LOCK(&thread->lock);
-	int i;
 	for (i = 0; i < thread->listeners.head; ++i) {
-		message clone;;
+		message clone;
 		UV thread_id;
 		MUTEX_LOCK(&threads.lock); /* unlocked by queue_enqueue */
 		thread_id = thread->listeners.list[i];

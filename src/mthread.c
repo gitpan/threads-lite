@@ -1,7 +1,13 @@
+#ifndef USE_SAFE
+#define USE_SAFE 1
+#endif
+
 #define PERL_NO_GET_CONTEXT
 #include "EXTERN.h"
 #include "perl.h"
+#if !USE_SAFE
 #define NO_XSLOCKS
+#endif
 #include "XSUB.h"
 
 #include "message.h"
@@ -64,7 +70,10 @@ static const char* argv[] = {"", "-e", "0"};
 static int argc = sizeof argv / sizeof *argv;
 
 void store_self(pTHX, mthread* thread) {
-	SV* thread_sv = newSV_type(SVt_PV);
+	SV *thread_sv, *self;
+	AV* message_cache;
+
+	thread_sv = newSV_type(SVt_PV);
 	SvPVX(thread_sv) = (char*) thread;
 	SvCUR(thread_sv) = sizeof(mthread);
 	SvLEN(thread_sv) = 0;
@@ -72,11 +81,11 @@ void store_self(pTHX, mthread* thread) {
 	SvREADONLY_on(thread_sv);
 	hv_store(PL_modglobal, "threads::lite::thread", 21, thread_sv, 0);
 
-	SV* self = newRV_noinc(newSVuv(thread->id));
+	self = newRV_noinc(newSVuv(thread->id));
 	sv_bless(self, gv_stashpv("threads::lite::tid", TRUE));
 	hv_store(PL_modglobal, "threads::lite::self", 19, self, 0);
 
-	AV* message_cache = newAV();
+	message_cache = newAV();
 	hv_store(PL_modglobal, "threads::lite::message_cache", 28, (SV*)message_cache, 0);
 	thread->cache = message_cache;
 }
@@ -119,14 +128,18 @@ static void* run_thread(void* arg) {
 	PERL_SET_CONTEXT(my_perl);
 
 	queue_dequeue(&thread->queue, &to_run, NULL);
+
+	ENTER;
+	SAVETMPS;
 	call = SvRV(message_load_value(&to_run));
 
 	PUSHMARK(SP);
-	PUSHs(newSVpvn("exit", 4));
+	mXPUSHs(newSVpvn("exit", 4));
 	status = newSVpvn("normal", 6);
-	PUSHs(status);
-	PUSHs(newSViv(thread->id));
+	mXPUSHs(status);
+	mXPUSHs(newSViv(thread->id));
 
+	ENTER;
 	PUSHMARK(SP);
 	PUTBACK;
 	call_sv(call, G_ARRAY|G_EVAL);
@@ -137,9 +150,15 @@ static void* run_thread(void* arg) {
 		warn("Thread %"UVuf" got error %s\n", thread->id, SvPV_nolen(ERRSV));
 		PUSHs(ERRSV);
 	}
+
 	message_from_stack_pushed(&message);
+	LEAVE;
+
 	send_listeners(thread, &message);
 	message_destroy(&message);
+
+	FREETMPS;
+	LEAVE;
 
 	shutdown_mutex = get_shutdown_mutex();
 
@@ -267,24 +286,33 @@ static void save_modules(pTHX, message* message, HV* options) {
 
 static void load_modules(pTHX, message* list_mess) {
 	if (list_mess->type) {
-		SV* list_ref = message_load_value(list_mess);
-		AV* list = (AV*)SvRV(list_ref);
-		I32 len = av_len(list) + 1;
+		SV* list_ref;
+		AV* list;
+		I32 len;
 		int i;
+
+		SAVETMPS;
+		list_ref = message_load_value(list_mess);
+		SvREFCNT_inc(list_ref);
+		list = (AV*)SvRV(list_ref);
+		len = av_len(list) + 1;
 		for(i = 0; i < len; i++) {
 			SV** entry = av_fetch(list, i, FALSE);
 			load_module(PERL_LOADMOD_NOIMPORT, *entry, NULL, NULL);
 		}
+		FREETMPS;
 	}
 }
 
 static void push_thread(pTHX, mthread* thread) {
 	PERL_SET_CONTEXT(aTHX);
-	dSP;
-	SV* to_push = newRV_noinc(newSVuv(thread->id));
-	sv_bless(to_push, gv_stashpv("threads::lite::tid", FALSE));
-	XPUSHs(to_push);
-	PUTBACK;
+	{
+		dSP;
+		SV* to_push = newRV_noinc(newSVuv(thread->id));
+		sv_bless(to_push, gv_stashpv("threads::lite::tid", FALSE));
+		XPUSHs(to_push);
+		PUTBACK;
+	}
 }
 
 struct thread_create {
@@ -314,6 +342,7 @@ static int prepare_thread_create(pTHX, struct thread_create* new_thread, HV* opt
 	return get_iv_option(aTHX, options, "pool_size", 1);
 }
 
+#if !USE_SAFE
 static PerlInterpreter* thread_clone(pTHX, mthread* thread) {
 	dXCPT;
 	XCPT_TRY_START {
@@ -325,39 +354,62 @@ static PerlInterpreter* thread_clone(pTHX, mthread* thread) {
 		XCPT_RETHROW;
 	}
 }
+#endif
 
-void S_create_push_threads(PerlInterpreter* self, HV* options, SV* startup) {
+void S_create_push_threads(tTHX self, HV* options, SV* startup) {
 	struct thread_create thread_options;
+	int clone_number;
+	int counter;
 
 	Zero(&thread_options, 1, struct thread_create);
-	int clone_number = prepare_thread_create(self, &thread_options, options, startup);
+	clone_number = prepare_thread_create(self, &thread_options, options, startup);
 
-	PerlInterpreter* my_perl = construct_perl();
-	load_modules(my_perl, &thread_options.modules);
+#if USE_SAFE
+	for (counter = 0; counter < clone_number; ++counter) {
+#else
+	{
+#endif /* USE_SAFE */
+		PerlInterpreter* my_perl;
+		mthread* thread;
+		message to_run;
 
-	mthread* thread = mthread_alloc(my_perl);
-	store_self(my_perl, thread);
-	if (thread_options.monitor)
-		thread_add_listener(self, thread->id, thread_options.parent_id);
+		my_perl = construct_perl();
 
-	push_thread(self, thread);
-	while (--clone_number) {
-		PerlInterpreter* my_clone = thread_clone(my_perl, thread);
-		mthread* thread = mthread_alloc(my_clone);
-		message clone;
+		thread = mthread_alloc(my_perl);
+		store_self(my_perl, thread);
 
-		store_self(my_clone, thread);
 		if (thread_options.monitor)
 			thread_add_listener(self, thread->id, thread_options.parent_id);
-		message_clone(&thread_options.to_run, &clone);
-		queue_enqueue(&thread->queue, &clone, NULL);
+
+		if (thread_options.modules.type) {
+			message modules;
+			message_clone(&thread_options.modules, &modules);
+			load_modules(my_perl, &modules);
+		}
+
 		push_thread(self, thread);
+
+#if !USE_SAFE
+		while (--clone_number) {
+			PerlInterpreter* my_clone = thread_clone(my_perl, thread);
+			mthread* thread = mthread_alloc(my_clone);
+			message clone;
+
+			store_self(my_clone, thread);
+			if (thread_options.monitor)
+				thread_add_listener(self, thread->id, thread_options.parent_id);
+			message_clone(&thread_options.to_run, &clone);
+			queue_enqueue(&thread->queue, &clone, NULL);
+			push_thread(self, thread);
+			start_thread(thread, thread_options.stack_size);
+		}
+#endif
+		message_clone(&thread_options.to_run, &to_run);
+		queue_enqueue(&thread->queue, &to_run, NULL);
 		start_thread(thread, thread_options.stack_size);
 	}
-
-	queue_enqueue(&thread->queue, &thread_options.to_run, NULL);
-
-	start_thread(thread, thread_options.stack_size);
+	message_destroy(&thread_options.to_run);
+	message_destroy(&thread_options.modules);
 
 	PERL_SET_CONTEXT(self);
 }
