@@ -7,11 +7,11 @@ use Exporter 5.57 qw/import/;
 
 our @EXPORT_OK = qw/parallel_map parallel_grep/;
 
-use threads::lite qw/self spawn receive receive_table receive_match/;
+use threads::lite qw/self spawn receive receive_match/;
 use constant DEFAULT_THREADS => 4;
 use Carp qw/carp/;
 
-our $VERSION = 0.029_001;
+our $VERSION = 0.029_002;
 our $THREADS ||= DEFAULT_THREADS;
 
 sub _mapper {
@@ -125,7 +125,7 @@ threads::lite::list - Threaded list utilities
 
 =head1 VERSION
 
-Version 0.029_001
+Version 0.029_002
 
 =head1 SYNOPSIS
 
