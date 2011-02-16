@@ -15,39 +15,39 @@ not run its Makefile.PL or Build.PL.
 Hash: SHA1
 
 SHA1 6f519e4ad2a36e3209465c5412f69a2acc0a7687 Build.PL
-SHA1 77942dd87197ff3d6f5bc5d4bb2e3d8b11b0e365 Changes
+SHA1 478b2b307cce92276038bd01b0beb036635a329e Changes
 SHA1 b9fb5b68929fab8dcf866e195ab7a3eb27cae91b LICENSE
 SHA1 dda1178f2bb427689cf2106b9b815111ac2c5727 MANIFEST
-SHA1 51bb6f929b86a1e2801d366d4454558699529205 META.yml
+SHA1 f606ba71af2423d903c00b7572c03e73dc35b29a META.yml
 SHA1 eb7f74d943df9b232fce4c9c5e6070070c9eb363 Makefile.PL
 SHA1 f6a8b33372797f3ba3e3633b692261809114715a README
-SHA1 415876b69e5e902b51359d1752dda2c7c563eb33 examples/reader.pl
-SHA1 35116ee3218c7665a3969780376757d4cad672b7 lib/threads/lite.pm
+SHA1 8266ccadfac6549aab29871d021ae603d9961616 examples/reader.pl
+SHA1 bf5f8947e28ea251a86210193d0c5e025fcd4dca lib/threads/lite.pm
 SHA1 0183a5ebb88d7d6d0a33884a7b922012a0882153 lib/threads/lite.xs
-SHA1 fbae73923ff74c64558d96d8372b9f67c30b3d1c lib/threads/lite/list.pm
-SHA1 628f2741d6cf546f5a8bc1df00fdc70be09dab70 lib/threads/lite/queue.pm
-SHA1 ba8979461b038e1802c68d55f60acc1f18ff69d6 lib/threads/lite/tid.pm
+SHA1 d11657dee1303b561ef0d9858efa1f53d14e1c56 lib/threads/lite/list.pm
+SHA1 5587b0c1be76ed713420db4aaef30eceeeea5505 lib/threads/lite/queue.pm
+SHA1 822f35e0cf9002cdce344a75480e39572744e71d lib/threads/lite/tid.pm
 SHA1 b240a14a471f6c2ac2c9c51c33f24f5f86a3916a src/message.c
 SHA1 1b7091a564dab04651755d7bff92d69ed09120ae src/message.h
-SHA1 dd0979d98d184dde771cfe8aec1f8f24dbe10096 src/mthread.c
+SHA1 586ced9356cdff47b8a0613eb2a0b94bf947483e src/mthread.c
 SHA1 288d8f2ace5a6c03ce8a9cd2cb28a881587ba639 src/mthread.h
-SHA1 b32cceea0f72c615a522f778495478d07c57c1d2 src/queue.c
-SHA1 aba6a79a4866bb17cb3251a64aa56106490b68ff src/queue.h
-SHA1 ee9493941ac0230bf562d009501a4acf8ac3d075 src/resources.c
-SHA1 2b24614823290ff5afbfd8e54ac8fadd654a5027 src/resources.h
+SHA1 68f5461434a872ed95f45a71e9dd87ac42209be0 src/queue.c
+SHA1 b0a9ab7dce14edaf9c829b636a2606e233d08ea7 src/queue.h
+SHA1 2debd70bef82ed19e82a775694cc4b54cfe07520 src/resources.c
+SHA1 29e8365938baec7010a423eefc2fb89106134d31 src/resources.h
 SHA1 8677cb7f1eca378b909c38ec0d400978c2153587 src/sync.c
 SHA1 cf9406d032d5195bbd78ac49709868c678227321 src/sync.h
 SHA1 725a32d64d694514ba6cd6d076f4af253bab69c9 t/00-load.t
-SHA1 daeeb669e8bc6998cf5a214beadb50c7e01abdef t/10-basics.t
+SHA1 f4d9b1f97aeea8330b766caa78fd44f01dce77d8 t/10-basics.t
 SHA1 eafc999f305caefa942c2bb79391a3fc03cb3039 t/11-input.t
 SHA1 dea1813b2484529f48538e64c118e9c37b1d81d5 t/20-lists.t
-SHA1 78563f7233b7750f42a93acba2de37e9b078a279 t/20-queues.t
+SHA1 6771f8929e1000cb805fc1af1a353ffbf8ab12fe t/20-queues.t
 SHA1 0b1c5a2d59be6bfa7d60c64cd964fea6a0331705 t/pod-coverage.t
 SHA1 640935336dc1123c0069bcf5432bcaedc2cf22d3 t/pod.t
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iEYEARECAAYFAk1ZL40ACgkQTd+EWiaICwqxSACg0kj7n95TmCxEbQWFYk0GqN+T
-eLcAn26BJkMwlBZwbhx8GybEMtShn9GU
-=mZyC
+iEYEARECAAYFAk1cQsUACgkQTd+EWiaICwocoQCgqowNGuGFmgcp9u/IBr8AoT0x
+jzwAnReW6iX/qgDWnBgSdFB+DUUMirxe
+=4UBq
 -----END PGP SIGNATURE-----

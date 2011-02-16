@@ -22,16 +22,16 @@ name: threads-lite
 provides:
   threads::lite:
     file: lib/threads/lite.pm
-    version: 0.029_003
+    version: 0.029_004
   threads::lite::list:
     file: lib/threads/lite/list.pm
-    version: 0.029003
+    version: 0.029004
   threads::lite::queue:
     file: lib/threads/lite/queue.pm
-    version: 0.029003
+    version: 0.029004
   threads::lite::tid:
     file: lib/threads/lite/tid.pm
-    version: 0.029003
+    version: 0.029004
 requires:
   Exporter: 5.57
   Storable: 2.05
@@ -40,4 +40,4 @@ resources:
   bugtracker: http://rt.cpan.org/NoAuth/Bugs.html?Dist=threads-lite
   license: http://dev.perl.org/licenses/
   repository: http://github.com/Leont/threads-lite/tree
-version: 0.029_003
+version: 0.029_004
