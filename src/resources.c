@@ -61,7 +61,7 @@ static void wait_for_all_other_threads() {
 	COND_DESTROY(&counter.condvar);
 }
 
-static XS(end_locker) {
+static XSPROTO(end_locker) {
 	dVAR; dXSARGS;
 	perl_mutex* mutex;
 
@@ -90,6 +90,7 @@ void global_init(pTHX) {
 		resource_init(&threads, 8);
 		resource_init(&queues, 8);
 		ret = mthread_alloc(aTHX);
+		ret->interp = my_perl;
 		store_self(aTHX, ret);
 
 		/* This is a nasty trick to make sure locking is performed during part of the destruct */
@@ -108,7 +109,7 @@ mthread* mthread_alloc(PerlInterpreter* my_perl) {
 	ret = PerlMemShared_calloc(1, sizeof *ret);
 	queue_init(&ret->queue);
 	ret->id = resource_addobject(&threads, ret);
-	ret->interp = my_perl;
+	ret->interp = NULL;
 	MUTEX_INIT(&ret->lock);
 	return ret;
 }
@@ -165,7 +166,7 @@ static message_queue* S_get_queue(pTHX_ UV queue_id) {
 #define THREAD_FINALLY(undo) THREAD_CATCH_FINALLY(0, undo)
 
 
-void S_thread_send(pTHX_ UV thread_id, message* message) {
+void S_thread_send(pTHX_ UV thread_id, const message* message) {
 	dXCPT;
 
 	MUTEX_LOCK(&threads.lock);
@@ -175,7 +176,7 @@ void S_thread_send(pTHX_ UV thread_id, message* message) {
 	} THREAD_CATCH( MUTEX_UNLOCK(&threads.lock) );
 }
 
-void S_queue_send(pTHX_ UV queue_id, message* message) {
+void S_queue_send(pTHX_ UV queue_id, const message* message) {
 	dXCPT;
 
 	MUTEX_LOCK(&queues.lock);
@@ -185,42 +186,45 @@ void S_queue_send(pTHX_ UV queue_id, message* message) {
 	} THREAD_CATCH( MUTEX_UNLOCK(&queues.lock) );
 }
 
-void S_queue_receive(pTHX_ UV queue_id, message* message) {
+const message* S_queue_receive(pTHX_ UV queue_id) {
 	dXCPT;
+	const message* ret;
 
 	MUTEX_LOCK(&queues.lock);
 	THREAD_TRY {
 		message_queue* queue = get_queue(queue_id);
-		queue_dequeue(queue, message, &queues.lock);
+		ret = queue_dequeue(queue, &queues.lock);
 	} THREAD_CATCH( MUTEX_UNLOCK(&queues.lock) );
+
+	return ret;
 }
 
-bool S_queue_receive_nb(pTHX_ UV queue_id, message* message) {
+const message* S_queue_receive_nb(pTHX_ UV queue_id) {
 	dXCPT;
-	bool ret;
+	const message* ret;
 
 	MUTEX_LOCK(&queues.lock);
 	THREAD_TRY {
 		message_queue* queue = get_queue(queue_id);
-		ret = queue_dequeue_nb(queue, message, &queues.lock);
+		ret = queue_dequeue_nb(queue, &queues.lock);
 	} THREAD_CATCH( MUTEX_UNLOCK(&queues.lock) );
 	return ret;
 }
 
-void S_send_listeners(pTHX_ mthread* thread, message* mess) {
+void S_send_listeners(pTHX_ mthread* thread, const message* mess) {
 	int i;
 	dXCPT;
 
 	MUTEX_LOCK(&thread->lock);
 	for (i = 0; i < thread->listeners.head; ++i) {
-		message clone;
+		const message* clone;
 		UV thread_id;
 		MUTEX_LOCK(&threads.lock); /* unlocked by queue_enqueue */
 		thread_id = thread->listeners.list[i];
 		if (thread_id >= threads.current || threads.objects[thread_id] == NULL)
 			continue;
-		message_clone(mess, &clone);
-		queue_enqueue(&((mthread*)threads.objects[thread_id])->queue, &clone, &threads.lock);
+		clone = message_clone(mess);
+		queue_enqueue(&((mthread*)threads.objects[thread_id])->queue, clone, &threads.lock);
 	}
 	MUTEX_UNLOCK(&thread->lock);
 }
