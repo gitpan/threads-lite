@@ -147,15 +147,15 @@ static void* run_thread(void* arg) {
 	mthread* thread = (mthread*) arg;
 	PerlInterpreter* my_perl = construct_perl();
 	const message *to_run, *modules, *message;
-	thread->interp = my_perl;
-	store_self(my_perl, thread);
 	SV *call, *status;
 	perl_mutex* shutdown_mutex;
+	thread->interp = my_perl;
 
 #ifndef WIN32
 	S_set_sigmask(&thread->initial_sigmask);
 #endif
 	PERL_SET_CONTEXT(my_perl);
+	store_self(my_perl, thread);
 
 	{
 		dSP;

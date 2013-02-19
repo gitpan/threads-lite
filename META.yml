@@ -13,7 +13,7 @@ build_requires:
 configure_requires:
   Module::Build: 0
 dynamic_config: 1
-generated_by: 'Module::Build version 0.38, CPAN::Meta::Converter version 2.113640'
+generated_by: 'Module::Build version 0.4001, CPAN::Meta::Converter version 2.120921'
 keywords:
   - threads
   - channels
@@ -25,16 +25,16 @@ name: threads-lite
 provides:
   threads::lite:
     file: lib/threads/lite.pm
-    version: 0.031_001
+    version: 0.032
   threads::lite::list:
     file: lib/threads/lite/list.pm
-    version: 0.031_001
+    version: 0.032
   threads::lite::queue:
     file: lib/threads/lite/queue.pm
-    version: 0.031_001
+    version: 0.032
   threads::lite::tid:
     file: lib/threads/lite/tid.pm
-    version: 0.031_001
+    version: 0.032
 requires:
   Exporter: 5.57
   Storable: 2.05
@@ -43,4 +43,4 @@ resources:
   bugtracker: http://rt.cpan.org/NoAuth/Bugs.html?Dist=threads-lite
   license: http://dev.perl.org/licenses/
   repository: http://github.com/Leont/threads-lite/tree
-version: 0.031_001
+version: 0.032

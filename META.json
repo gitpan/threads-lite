@@ -4,7 +4,7 @@
       "Leon Timmermans <leont@cpan.org>"
    ],
    "dynamic_config" : 1,
-   "generated_by" : "Module::Build version 0.38, CPAN::Meta::Converter version 2.113640",
+   "generated_by" : "Module::Build version 0.4001, CPAN::Meta::Converter version 2.120921",
    "keywords" : [
       "threads",
       "channels"
@@ -20,18 +20,18 @@
    "prereqs" : {
       "build" : {
          "requires" : {
-            "ExtUtils::CBuilder" : 0,
-            "Module::Build" : 0,
-            "Scalar::Util" : 0,
-            "Test::Differences" : 0,
-            "Test::Exception" : 0,
-            "Test::More" : 0,
-            "Time::HiRes" : 0
+            "ExtUtils::CBuilder" : "0",
+            "Module::Build" : "0",
+            "Scalar::Util" : "0",
+            "Test::Differences" : "0",
+            "Test::Exception" : "0",
+            "Test::More" : "0",
+            "Time::HiRes" : "0"
          }
       },
       "configure" : {
          "requires" : {
-            "Module::Build" : 0
+            "Module::Build" : "0"
          }
       },
       "runtime" : {
@@ -45,22 +45,22 @@
    "provides" : {
       "threads::lite" : {
          "file" : "lib/threads/lite.pm",
-         "version" : "0.031_001"
+         "version" : "0.032"
       },
       "threads::lite::list" : {
          "file" : "lib/threads/lite/list.pm",
-         "version" : "0.031_001"
+         "version" : "0.032"
       },
       "threads::lite::queue" : {
          "file" : "lib/threads/lite/queue.pm",
-         "version" : "0.031_001"
+         "version" : "0.032"
       },
       "threads::lite::tid" : {
          "file" : "lib/threads/lite/tid.pm",
-         "version" : "0.031_001"
+         "version" : "0.032"
       }
    },
-   "release_status" : "testing",
+   "release_status" : "stable",
    "resources" : {
       "bugtracker" : {
          "web" : "http://rt.cpan.org/NoAuth/Bugs.html?Dist=threads-lite"
@@ -72,5 +72,5 @@
          "url" : "http://github.com/Leont/threads-lite/tree"
       }
    },
-   "version" : "0.031_001"
+   "version" : "0.032"
 }

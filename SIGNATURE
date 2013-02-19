@@ -15,23 +15,23 @@ not run its Makefile.PL or Build.PL.
 Hash: SHA1
 
 SHA1 4e9fe81bff56cf5ff72e5cd752045ce5926777f3 Build.PL
-SHA1 2b43574146b36f5659fff7096b2b8d165ae8bdb4 Changes
+SHA1 faa633834ab11b7005f4a95ee1277823f137d450 Changes
 SHA1 7048a71e03dae74a0ed47a416df1d0ece97c12e9 LICENSE
 SHA1 4b3203a70bef69139fa52c9285bff03b7adedf6a MANIFEST
-SHA1 7405e88b4aef9816694aee3f8bfe015d9d3cea75 META.json
-SHA1 47091091e0731586fb572a4eb4103a6db58dfeca META.yml
-SHA1 2cc49425442d4c84cf2b025e746e64621767f2c8 Makefile.PL
+SHA1 307270ef814a44e89e1b5344497f4c61b4144e3c META.json
+SHA1 fc1b513a46cd2f6eb7e45f39b08b0bda4e196056 META.yml
+SHA1 c137bda84c047ca6d4e4f825e8da6a45dcf2904e Makefile.PL
 SHA1 f6a8b33372797f3ba3e3633b692261809114715a README
 SHA1 7bf715439701e1a9b56a9019932bd4ea1eb459f6 examples/chameneos
 SHA1 8266ccadfac6549aab29871d021ae603d9961616 examples/reader.pl
-SHA1 596321f8739e39c3eed4d3530d020e7fce3b98b4 lib/threads/lite.pm
+SHA1 5826d93012d45d3c63652370be55628e2773691c lib/threads/lite.pm
 SHA1 ecbde4471c33dbda3db5ef7269a2813d2072a4ca lib/threads/lite.xs
-SHA1 cc4e0fa016d963c0aba8e6b699e4c70a13597004 lib/threads/lite/list.pm
-SHA1 5b5e2bfb92f70445b3039b46fdbd56423f2ce076 lib/threads/lite/queue.pm
-SHA1 b075668ea7028d57b2e5c36e876a2ef2f2288e61 lib/threads/lite/tid.pm
+SHA1 87cb8eaac1a65e1cb12954b9bf4b82980767a2ae lib/threads/lite/list.pm
+SHA1 e673193a0bbd78d6ef24cc79617f5200dbc65c2c lib/threads/lite/queue.pm
+SHA1 6169037ba88727a175e2338de0722c9bb96244f5 lib/threads/lite/tid.pm
 SHA1 641644a68221d45e692bbe0cf4cb2cffb9cb93eb src/message.c
 SHA1 df0237264daa5b950d874d6f721536ba2ed65643 src/message.h
-SHA1 dd82d244b5e15859a8300bc60f19ca9dc44f5485 src/mthread.c
+SHA1 eedbe4a2133d51fe2aa1e28e6e0cbdd308cc1c6b src/mthread.c
 SHA1 c34ae488e4f3cb4517241a8ce3a589dbb3068ad7 src/mthread.h
 SHA1 9646834d7dcbf0bb30e7a0212d235937151d7e04 src/queue.c
 SHA1 8cf1e85ed8d833b9dbc789d13f8eec3bf07338b6 src/queue.h
@@ -48,7 +48,7 @@ SHA1 951d77163bf7d98c327f9024258a8d84938e306b t/pod.t
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iEYEARECAAYFAk8u+VYACgkQTd+EWiaICwo9WgCdHERg3yVvf3vW6Dvl69bD4u7e
-5AwAniBA1magKS+5oXyvABD7GSJYJhTu
-=s3CE
+iEYEARECAAYFAlEjjN0ACgkQTd+EWiaICwpLsgCfXcfAkOS00TkGvGvOo67kuJL+
+C5wAn3gqV/vq/X7IFU8bqG8JuZ5txVwh
+=3c+n
 -----END PGP SIGNATURE-----
