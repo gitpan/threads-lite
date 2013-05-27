@@ -4,7 +4,7 @@
       "Leon Timmermans <leont@cpan.org>"
    ],
    "dynamic_config" : 1,
-   "generated_by" : "Module::Build version 0.4001, CPAN::Meta::Converter version 2.120921",
+   "generated_by" : "Module::Build version 0.4005, CPAN::Meta::Converter version 2.120921",
    "keywords" : [
       "threads",
       "channels"
@@ -38,6 +38,7 @@
          "requires" : {
             "Exporter" : "5.57",
             "Storable" : "2.05",
+            "experimental" : "0.003",
             "perl" : "5.010001"
          }
       }
@@ -45,19 +46,19 @@
    "provides" : {
       "threads::lite" : {
          "file" : "lib/threads/lite.pm",
-         "version" : "0.032"
+         "version" : "0.033"
       },
       "threads::lite::list" : {
          "file" : "lib/threads/lite/list.pm",
-         "version" : "0.032"
+         "version" : "0.033"
       },
       "threads::lite::queue" : {
          "file" : "lib/threads/lite/queue.pm",
-         "version" : "0.032"
+         "version" : "0.033"
       },
       "threads::lite::tid" : {
          "file" : "lib/threads/lite/tid.pm",
-         "version" : "0.032"
+         "version" : "0.033"
       }
    },
    "release_status" : "stable",
@@ -72,5 +73,5 @@
          "url" : "http://github.com/Leont/threads-lite/tree"
       }
    },
-   "version" : "0.032"
+   "version" : "0.033"
 }

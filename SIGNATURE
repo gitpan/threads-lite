@@ -1,5 +1,5 @@
 This file contains message digests of all files listed in MANIFEST,
-signed via the Module::Signature module, version 0.68.
+signed via the Module::Signature module, version 0.70.
 
 To verify the content in this distribution, first make sure you have
 Module::Signature installed, then type:
@@ -14,21 +14,21 @@ not run its Makefile.PL or Build.PL.
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
-SHA1 4e9fe81bff56cf5ff72e5cd752045ce5926777f3 Build.PL
-SHA1 faa633834ab11b7005f4a95ee1277823f137d450 Changes
+SHA1 907792e1d641be922844a1229024076cca123a0f Build.PL
+SHA1 e16329b1e9c1ffc9808ef9eb401e0aa98262ce96 Changes
 SHA1 7048a71e03dae74a0ed47a416df1d0ece97c12e9 LICENSE
 SHA1 4b3203a70bef69139fa52c9285bff03b7adedf6a MANIFEST
-SHA1 307270ef814a44e89e1b5344497f4c61b4144e3c META.json
-SHA1 fc1b513a46cd2f6eb7e45f39b08b0bda4e196056 META.yml
-SHA1 c137bda84c047ca6d4e4f825e8da6a45dcf2904e Makefile.PL
+SHA1 5c9d8089b5765e7c735531a6efe301e5b0652300 META.json
+SHA1 a3952c05e3ecbd64b527e94a3deec5de8c290699 META.yml
+SHA1 732325c5e09956c2f16d8c0ec8ef611a8c3e9d6d Makefile.PL
 SHA1 f6a8b33372797f3ba3e3633b692261809114715a README
 SHA1 7bf715439701e1a9b56a9019932bd4ea1eb459f6 examples/chameneos
 SHA1 8266ccadfac6549aab29871d021ae603d9961616 examples/reader.pl
-SHA1 5826d93012d45d3c63652370be55628e2773691c lib/threads/lite.pm
+SHA1 b3daade4c81349348a9e0bc3716cf2d9ea5917cc lib/threads/lite.pm
 SHA1 ecbde4471c33dbda3db5ef7269a2813d2072a4ca lib/threads/lite.xs
-SHA1 87cb8eaac1a65e1cb12954b9bf4b82980767a2ae lib/threads/lite/list.pm
-SHA1 e673193a0bbd78d6ef24cc79617f5200dbc65c2c lib/threads/lite/queue.pm
-SHA1 6169037ba88727a175e2338de0722c9bb96244f5 lib/threads/lite/tid.pm
+SHA1 cf10a94c23156e758849f3a5e9eac743dee649d9 lib/threads/lite/list.pm
+SHA1 e0058f4db57b27c00632cd4479ffdeea98c405cb lib/threads/lite/queue.pm
+SHA1 3a6bb9ca66bc2ed7993a8561118b15db953c7269 lib/threads/lite/tid.pm
 SHA1 641644a68221d45e692bbe0cf4cb2cffb9cb93eb src/message.c
 SHA1 df0237264daa5b950d874d6f721536ba2ed65643 src/message.h
 SHA1 eedbe4a2133d51fe2aa1e28e6e0cbdd308cc1c6b src/mthread.c
@@ -39,16 +39,16 @@ SHA1 56e6e4e338b48479419875264a15861ea4f5d662 src/resources.c
 SHA1 71dd932e1d85a8467d4e8e9f00311e3da123585d src/resources.h
 SHA1 9dde6884ce31495b6429bdb767960a5e10eb8628 src/tables.h.PL
 SHA1 725a32d64d694514ba6cd6d076f4af253bab69c9 t/00-load.t
-SHA1 f4d9b1f97aeea8330b766caa78fd44f01dce77d8 t/10-basics.t
+SHA1 d31ba3f834d70c0217c675a989196a29b19ec99a t/10-basics.t
 SHA1 eafc999f305caefa942c2bb79391a3fc03cb3039 t/11-input.t
 SHA1 dea1813b2484529f48538e64c118e9c37b1d81d5 t/20-lists.t
-SHA1 36a150e17384e44980dc045f39b124851d961423 t/20-queues.t
+SHA1 beff3d4b9ad00dd26ff65bbb845603625006d366 t/20-queues.t
 SHA1 86cd2563b33d57757519de2853b698d4a5b3a0d7 t/pod-coverage.t
 SHA1 951d77163bf7d98c327f9024258a8d84938e306b t/pod.t
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iEYEARECAAYFAlEjjN0ACgkQTd+EWiaICwpLsgCfXcfAkOS00TkGvGvOo67kuJL+
-C5wAn3gqV/vq/X7IFU8bqG8JuZ5txVwh
-=3c+n
+iEYEARECAAYFAlGjmjcACgkQTd+EWiaICwo7dwCeI0qQ5b5lwUPAXIkC51F6Zhhf
+/dcAnR8F1LADM+JEqOx0/XSt7g7P5E2a
+=CD7x
 -----END PGP SIGNATURE-----
